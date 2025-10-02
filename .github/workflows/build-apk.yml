@@ -1,0 +1,33 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Buildozer
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-17-jdk git zip unzip
+          pip install buildozer
+      - name: Generate spec & build
+        run: |
+          buildozer init
+          # 仅改 3 行
+          sed -i 's/^title.*/title = RatioQuiz/' buildozer.spec
+          sed -i 's/^package.name.*/package.name = ratioquiz/' buildozer.spec
+          sed -i 's/^requirements.*/requirements = python3,kivy/' buildozer.spec
+          buildozer android debug
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug
+          path: bin/*.apk
