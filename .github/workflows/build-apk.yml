@@ -16,12 +16,11 @@ jobs:
       - name: Install Buildozer
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk git zip unzip
-          pip install buildozer
+          sudo apt install -y openjdk-17-jdk git zip unzip python3-pip
+          pip install --user buildozer cython
       - name: Generate spec & build
         run: |
           buildozer init
-          # 仅改 3 行
           sed -i 's/^title.*/title = RatioQuiz/' buildozer.spec
           sed -i 's/^package.name.*/package.name = ratioquiz/' buildozer.spec
           sed -i 's/^requirements.*/requirements = python3,kivy/' buildozer.spec
